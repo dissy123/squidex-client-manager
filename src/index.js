@@ -3,6 +3,8 @@ const fs = require('fs');
 // The API is generated from the swagger-js module
 const Swagger = require('swagger-client');
 const FormData = require('form-data');
+const axios = require('axios');
+const mime = require('mime-types');
 
 const { SquidexTokenManager } = require('./token_manager');
 const { buildFilterString } = require('./filter');
@@ -41,10 +43,11 @@ function ensureValidArg(argument) {
 class SquidexClientManager {
   constructor(url, appName, id, secret) {
     ensureValidArg(url); ensureValidArg(id); ensureValidArg(secret);
+    this.appName = appName;
     this.connectUrl = `${url}/identity-server/connect/token`;
     this.projectSpecUrl = `${url}/api/content/${appName}/swagger/v1/swagger.json`;
     this.squidexSpecUrl = `${url}/api/swagger/v1/swagger.json`;
-    this.appName = appName;
+    this.assetsUrl = `${url}/api/apps/${appName}/assets`;
     this.tokenManager = new SquidexTokenManager(
       this.connectUrl, id, secret, process.env.DEBUG_TOKEN_CACHE,
     );
@@ -252,17 +255,33 @@ class SquidexClientManager {
     return create;
   }
 
-  async CreateAssetAsync(assetUrl) {
-    await this.ensureValidClient();
-    // This is a work in progressgg
-    try {
-      const form = new FormData();
-      form.append('file', fs.createReadStream(assetUrl));
-      form.append('mimeType', 'jpeg');
+  async CreateAssetAsync(fileUrl) {
+    this.ensureValidClient();
+    const token = this.tokenManager.getToken();
+    Log.Debug(`CreateAssetAsync(${fileUrl})`);
 
-      const res = await this.squidexApi.apis.Assets
-        .Assets_PostAsset({ app: this.appName, file: form });
-      return res;
+    const file = fs.createReadStream(fileUrl);
+    const compos = fileUrl.split('/');
+    const filename = compos[compos.length - 1];
+
+    const form = new FormData();
+    form.append('file', file);
+    form.append('name', filename);
+    form.append('filename', filename);
+    form.append('mimeType', mime.contentType(filename));
+
+    try {
+      const response = await axios({
+        method: 'post',
+        url: this.assetsUrl,
+        data: form,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // eslint-disable-next-line no-underscore-dangle
+          // 'content-type': `multipart/form-data boundary=${form._boundary}`,
+        },
+      });
+      return response;
     } catch (error) {
       Log.Error(error);
       return null;
