@@ -99,6 +99,7 @@ test.serial('check drafts', async (t) => {
   const record = drafts[0];
   if (record.status === 'Draft') {
     await client.ChangeStatus('Articles', drafts[0].id, 'Published')
+    await client.ChangeStatus('Articles', drafts[0].id, 'Draft')
   } else {
     await client.ChangeStatus('Articles', drafts[0].id, 'Draft')
   }
