@@ -300,6 +300,7 @@ class SquidexClientManager {
     const self = this;
     if (record) {
       const update = await self.UpdateAsync(name, {
+        publish: record.status === 'Published',
         id: record.id,
         data: MergeRecords(record.data, payload.data),
       });
