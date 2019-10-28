@@ -362,7 +362,11 @@ Created https://cloud.squidex.io/api/assets/826d1176-d7c3-41cd-b166-13249fdcc225
 
 #### Changing Status
 
-TODO: add example
+```javascript
+const id = 'b94c89d2-e607-4147-b63b-0259542df9d0';
+const res = await client.ChangeStatus('Articles', id , 'Draft')
+[...]
+```
 
 ## Disclaimer
 
