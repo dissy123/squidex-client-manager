@@ -107,7 +107,6 @@ test.serial('check drafts', async (t) => {
 
 test.serial('perserve custom fields', async (t) => {
   const customMeta = "Don't overwrite this";
-  process.env.SQUIDEX_CLIENT_MERGE_CUSTOM_PREFIX
   const createOrUpdate = await client.CreateOrUpdateAsync('Articles', {
     data: {
       title: { iv: 'truly unique' },
@@ -115,6 +114,7 @@ test.serial('perserve custom fields', async (t) => {
       customMeta: { iv: customMeta },
     },
   }, 'title');
+  process.env.SQUIDEX_CLIENT_MERGE_CUSTOM_PREFIX = "custom"
   t.true(createOrUpdate.data.customMeta.iv === customMeta);
   const change = await client.CreateOrUpdateAsync('Articles', {
     data: {
