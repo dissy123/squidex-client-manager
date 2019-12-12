@@ -104,3 +104,24 @@ test.serial('check drafts', async (t) => {
     await client.ChangeStatus('Articles', drafts[0].id, 'Draft')
   }
 })
+
+test.serial('perserve custom fields', async (t) => {
+  const customMeta = "Don't overwrite this";
+  process.env.SQUIDEX_CLIENT_MERGE_CUSTOM_PREFIX
+  const createOrUpdate = await client.CreateOrUpdateAsync('Articles', {
+    data: {
+      title: { iv: 'truly unique' },
+      text: { iv: 'y' },
+      customMeta: { iv: customMeta },
+    },
+  }, 'title');
+  t.true(createOrUpdate.data.customMeta.iv === customMeta);
+  const change = await client.CreateOrUpdateAsync('Articles', {
+    data: {
+      title: { iv: 'truly unique' },
+      text: { iv: 'y' },
+      customMeta: { iv: uniqueString(customMeta) },
+    },
+  }, 'title');
+  t.true(change.data.customMeta.iv === customMeta);
+})
