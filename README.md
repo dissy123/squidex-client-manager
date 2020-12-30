@@ -386,6 +386,17 @@ To check your version visit check version visit `https://<my-server-url>/api/inf
 - Check the model name you are querying exists in the Squidex schema.
 - Check your token is valid.
 
+## Testing
+
+Environment variables that need to be set for the tests.
+
+```
+export SQUIDEX_CLIENT_SECRET='[...]'
+export SQUIDEX_CLIENT_ID='[...]'
+export SQUIDEX_CONNECT_URL='[...]'
+export APP_NAME='[...]'
+```
+
 [a]: https://docs.squidex.io/guides/02-api
 [0]: https://squidex.io/
 [twitter]: https://twitter.com/aalemayhu
