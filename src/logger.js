@@ -1,4 +1,4 @@
-const util = require('util');
+//const util = require('util');
 
 const writeLine = (prefix, msg, stream) => {
   stream.write(`[squidex-client-manager][${prefix}]: ${msg}\n`);
@@ -51,7 +51,7 @@ const bail = (msg, err, exitCode) => {
 };
 
 const inspect = (prefix, object) => {
-  Info(`${prefix} inspecting ${util.inspect(object)}`);
+  //Info(`${prefix} inspecting ${util.inspect(object)}`);
 };
 
 module.exports.Log = {
